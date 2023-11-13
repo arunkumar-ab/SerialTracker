@@ -129,7 +129,7 @@ class _RecordsForDateScreenState extends State<RecordsForDateScreen> {
             TextField(
               controller: _dateController,
               onChanged: _onDateChanged,
-              decoration: InputDecoration(S
+              decoration: InputDecoration(
                 labelText: 'Enter Date (dd-MM-yyy)',
               ),
             ),
