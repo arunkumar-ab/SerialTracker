@@ -1,6 +1,5 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:intl/intl.dart';
 import '../models/record_model.dart';
 
 class DatabaseHelper {
@@ -24,13 +23,13 @@ class DatabaseHelper {
       version: 1,
       onCreate: (Database db, int version) async {
         await db.execute(
-            'CREATE TABLE $tableName(id INTEGER PRIMARY KEY, number TEXT, quantity INTEGER, date TEXT)');
+            'CREATE TABLE $tableName(id INTEGER PRIMARY KEY, number INTEGER, quantity INTEGER, date TEXT)');
       },
     );
   }
 
   Future<void> insertOrUpdateRecord(
-      String number, int quantity, String date) async {
+      int number, int quantity, String date) async {
     Database db = await database;
     List<Map> records = await db.query(tableName,
         where: 'number = ? AND date = ?', whereArgs: [number, date]);
@@ -46,6 +45,37 @@ class DatabaseHelper {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }
+  }
+
+  Future<List<Map<String, dynamic>>> getAllRecords() async {
+    final Database db = await database;
+
+    // Replace 'your_table_name' with your actual table name
+    List<Map<String, dynamic>> records = await db.query(tableName);
+
+    return records;
+  }
+
+  Future<void> deleteRecordsForDateandNumber(String date, int numbers) async {
+    final Database db = await database;
+
+    // Replace 'your_table_name' with your actual table name
+    await db.delete(
+      tableName,
+      where: 'date = ? and number =?',
+      whereArgs: [date, numbers],
+    );
+  }
+
+  Future<void> deleteRecordsForDate(String date) async {
+    final Database db = await database;
+
+    // Replace 'your_table_name' with your actual table name
+    await db.delete(
+      tableName,
+      where: 'date = ? ',
+      whereArgs: [date],
+    );
   }
 
   Future<List<Record>> getRecordsForDate(String date) async {

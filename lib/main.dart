@@ -255,13 +255,12 @@
 // //     home:AddRecordScreen(),
 // //   ));
 // // }
+import 'package:count_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'screens/records_for_date_screen.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: RecordsForDateScreen(
-        DateFormat('dd-MM-yyyy').format(DateTime.now()).toString()),
+    debugShowCheckedModeBanner: false,
+    home: HomePage(),
   ));
 }
