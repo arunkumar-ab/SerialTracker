@@ -36,7 +36,7 @@ class _DeleteRecordScreenState extends State<DeleteRecordScreen> {
 
 //delete records
   Future<void> _deleteRecord(String date, int numbers) async {
-    bool confirmDelete = await _showConfirmationDialog(numbers);
+    bool confirmDelete = await _showConfirmationDialog(numbers, date);
 
     if (confirmDelete) {
       DatabaseHelper dbHelper = DatabaseHelper();
@@ -46,7 +46,7 @@ class _DeleteRecordScreenState extends State<DeleteRecordScreen> {
   }
 
 //confirm whether to delete numbers single
-  Future<bool> _showConfirmationDialog(int numbers) async {
+  Future<bool> _showConfirmationDialog(int numbers, String date) async {
     return await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -176,14 +176,14 @@ class _DeleteRecordScreenState extends State<DeleteRecordScreen> {
                       .map(
                         (record) => DataRow(
                           cells: [
-                            DataCell(Text(record['number'].toString())),
+                            DataCell(Text(record['number'])),
                             DataCell(Text(record['quantity'].toString())),
                             DataCell(Text(record['date'].toString())),
                             DataCell(
                               IconButton(
                                 icon: Icon(Icons.delete),
-                                onPressed: () => _deleteRecord(
-                                    record['date'], record['number']),
+                                onPressed: () => _deleteRecord(record['date'],
+                                    int.parse(record['number'])),
                               ),
                             ),
                           ],
