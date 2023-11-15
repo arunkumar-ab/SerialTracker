@@ -1,12 +1,12 @@
 class Record {
   final int id;
-  final String number;
+  final String n;
   final int quantity;
   final String date;
 
   Record(
       {required this.id,
-      required this.number,
+      required this.n,
       required this.quantity,
       required this.date});
 }

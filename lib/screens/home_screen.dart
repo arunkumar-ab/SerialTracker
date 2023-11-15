@@ -14,13 +14,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   // Index for the selected tab
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Count App'),
+        title: const Text('Count App'),
       ),
       body: PageView(
         controller: _pageController,
@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
           });
         },
         children: [
-          AddRecordScreen(),
+          const AddRecordScreen(),
           RecordsForDateScreen(
               DateFormat('dd-MM-yyyy').format(DateTime.now()).toString()),
           DeleteRecordScreen(),
@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
         onTap: (index) {
           _pageController.animateToPage(
             index,
-            duration: Duration(milliseconds: 100),
+            duration: const Duration(milliseconds: 100),
             curve: Curves.easeInOut,
           );
         },

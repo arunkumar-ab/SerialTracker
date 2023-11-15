@@ -23,28 +23,58 @@ class DatabaseHelper {
       version: 1,
       onCreate: (Database db, int version) async {
         await db.execute(
-            'CREATE TABLE $tableName(id INTEGER PRIMARY KEY, number INTEGER, quantity INTEGER, date TEXT)');
+            'CREATE TABLE $tableName(id INTEGER PRIMARY KEY, n TEXT, quantity INTEGER, date TEXT)');
+        await db.execute(
+          'CREATE TABLE previous(id INTEGER PRIMARY KEY, number TEXT, quantity INTEGER)',
+        );
       },
+      readOnly: false,
     );
   }
 
-  Future<void> insertOrUpdateRecord(
-      int number, int quantity, String date) async {
+  Future<List<Map<String, dynamic>>> getAllRecordsFromPreviousTable() async {
     Database db = await database;
-    List<Map> records = await db.query(tableName,
-        where: 'number = ? AND date = ?', whereArgs: [number, date]);
+    return await db.query('previous');
+  }
 
-    if (records.isNotEmpty) {
-      await db.rawUpdate(
-          'UPDATE $tableName SET quantity = quantity + ? WHERE number = ? AND date = ?',
-          [quantity, number, date]);
-    } else {
+  Future<void> insertOrUpdateRecord(String n, int quantity, String date) async {
+    Database db = await database;
+    await db.delete('previous');
+    // Query records before the update/insert
+    List<Map> records = await db
+        .query(tableName, where: 'n = ? AND date = ?', whereArgs: [n, date]);
+
+    int updatedRows = await db.rawUpdate(
+      'UPDATE $tableName SET quantity = quantity + ? WHERE n = ? AND date = ?',
+      [quantity, n.toString(), date],
+    );
+    print(updatedRows);
+    if (updatedRows == 0) {
       await db.insert(
         tableName,
-        {'number': number, 'quantity': quantity, 'date': date},
+        {'n': n.toString(), 'quantity': quantity, 'date': date},
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }
+    // Update the 'previous' table with the latest 'number' and 'quantity'
+    await db.insert(
+      'previous',
+      {'number': n.toString(), 'quantity': quantity},
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    print(records.map((record) => record['n'].runtimeType));
+
+    // if (records.isNotEmpty) {
+    //   await db.rawUpdate(
+    //       'UPDATE $tableName SET quantity = quantity + ? WHERE number = ? AND date = ?',
+    //       [quantity, number.toString(), date]);
+    // } else {
+    //   await db.insert(
+    //     tableName,
+    //     {'number': number.toString(), 'quantity': quantity, 'date': date},
+    //     conflictAlgorithm: ConflictAlgorithm.replace,
+    //   );
+    // }
   }
 
   Future<List<Map<String, dynamic>>> getAllRecords() async {
@@ -56,13 +86,14 @@ class DatabaseHelper {
     return records;
   }
 
-  Future<void> deleteRecordsForDateandNumber(String date, int numbers) async {
+  Future<void> deleteRecordsForDateandNumber(
+      String date, String numbers) async {
     final Database db = await database;
 
     // Replace 'your_table_name' with your actual table name
     await db.delete(
       tableName,
-      where: 'date = ? and number =?',
+      where: 'date = ? and n =?',
       whereArgs: [date, numbers],
     );
   }
@@ -86,7 +117,7 @@ class DatabaseHelper {
     return List.generate(maps.length, (i) {
       return Record(
         id: maps[i]['id'],
-        number: maps[i]['number'],
+        n: maps[i]['n'],
         quantity: maps[i]['quantity'],
         date: maps[i]['date'],
       );

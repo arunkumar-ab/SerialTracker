@@ -1,5 +1,4 @@
 import 'package:count_app/database/database_helper.dart';
-import 'package:count_app/screens/add_record_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -35,7 +34,7 @@ class _DeleteRecordScreenState extends State<DeleteRecordScreen> {
   }
 
 //delete records
-  Future<void> _deleteRecord(String date, int numbers) async {
+  Future<void> _deleteRecord(String date, String numbers) async {
     bool confirmDelete = await _showConfirmationDialog(numbers, date);
 
     if (confirmDelete) {
@@ -46,7 +45,7 @@ class _DeleteRecordScreenState extends State<DeleteRecordScreen> {
   }
 
 //confirm whether to delete numbers single
-  Future<bool> _showConfirmationDialog(int numbers, String date) async {
+  Future<bool> _showConfirmationDialog(String numbers, String date) async {
     return await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -130,16 +129,16 @@ class _DeleteRecordScreenState extends State<DeleteRecordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Delete Record'),
+        title: const Text('Delete Record'),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.calendar_month),
+            icon: const Icon(Icons.calendar_month),
             onPressed: () {
               _selectDate(); // Show confirmation dialog before deleting all data for the date
             },
           ),
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () {
               if (selectedDate != null) {
                 _showDeleteConfirmationDialog(
@@ -160,30 +159,30 @@ class _DeleteRecordScreenState extends State<DeleteRecordScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Display DataTable for existing records
                 DataTable(
                   columns: [
-                    DataColumn(label: Text('Number')),
-                    DataColumn(label: Text('Quantity')),
-                    DataColumn(label: Text('Date')),
-                    DataColumn(label: Text('Delete')),
+                    const DataColumn(label: Text('Number')),
+                    const DataColumn(label: Text('Quantity')),
+                    const DataColumn(label: Text('Date')),
+                    const DataColumn(label: Text('Delete')),
                   ],
                   rows: _records
                       .map(
                         (record) => DataRow(
                           cells: [
-                            DataCell(Text(record['number'])),
+                            DataCell(Text(record['n'].toString())),
                             DataCell(Text(record['quantity'].toString())),
                             DataCell(Text(record['date'].toString())),
                             DataCell(
                               IconButton(
-                                icon: Icon(Icons.delete),
-                                onPressed: () => _deleteRecord(record['date'],
-                                    int.parse(record['number'])),
+                                icon: const Icon(Icons.delete),
+                                onPressed: () => _deleteRecord(
+                                    record['date'], (record['n'])),
                               ),
                             ),
                           ],
