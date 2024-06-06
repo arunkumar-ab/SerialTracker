@@ -1,4 +1,4 @@
-# count_app
+# SerialTracker
 
 A new Flutter project.
 
